@@ -1,2 +1,9 @@
 language: node_js
 node_js: node
+deploy:
+  provider: heroku
+  api_key:
+    secure: iGRqEe0Hd69B/53xLTV0GcWJboAnH1fkHRWsNGPhr3ZyjLV9cPZH5epnxIBddkzLOgwhOdIG/hkAOj5rarpMUy0H7bCVMzA7iMjZAhIj51OKKMCIW3u/j17dPb/ITsqsBPi9M13yxIYiaQJMIGzqlpyXem6+4U9oNNtIPdP7bFPOxjzriU9Sn+66l1UJNUAF+7K8m8F1OX35+lMSFXbQEkCInRbBz9c1RXl/i42sDj1VcG8pEx7VJtnPfe5PjqLAxychFvAAJQToaBnzCyy1YJsiU7jvhpZ8n4ooDQqFNZT8FQueeQFhRsygoTXRSCzH05WZDRrw7H9rSb/KtMhEDAYtkWZFmVZO3xIe+nSR8KswOP8G8sC/S2RIISWJ+o3vYHIIcRFfXwtiZFR+edYn4E2vQkgz/azK7ufagNcqFPTLvLYjfrYqwMzl2TUPBZkUxciBeMADoz70C9NisZZQzNF8duEssoRONdK+HgLonJEoOmgc+nr1Cs2bEzSl0hrSy5LuKLjLkUxSqNsKAGgkweplSq+zUftcl9baJU0sa6W0JMeTjydHrwBLD1NHad/aOlKFg0YReWmSuRh6796WkG057+nYeUTO/aE6jOI/e36w1EXKzwa1s8Ul4phZznXNXVX0uITQt5aNd0t0uCBuC4aOEAFYdcwi2GV473cjRYo=
+  app: mighty-cliffs-27784
+  on:
+    repo: alysebos/bean
