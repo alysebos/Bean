@@ -10,7 +10,7 @@
 * Bean cursive logo made of yarn with the B being the shape of a bean and also the pad of a paw-print
 
 ### Feature Ideas
-* Users sare able to share pets. More than one person may care for a pet.
+* Users are able to share pets. More than one person may care for a pet.
 	* "Please enter the email of other caregivers" (find the ID and add to pets owners array)
 * If you remove a pet from your ownership, and you were the only owner the pet will be deleted, needs confirmation alert
 * All fields are editable on checkup edit - even if you initially didn't assign any value to them.
@@ -48,6 +48,7 @@
 		firstName: "Alex",
 		email: "eqaddictedfool@gmail.com",
 		password: "someOtherHashedPassword",
+		profilePhoto: false, // IF NO PROFILE PHOTO, USE A DEFAULT IMAGE
 		preferences: {
 			notifications: false,
 			language: "us-en",
