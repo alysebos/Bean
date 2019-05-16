@@ -112,7 +112,8 @@
 				highlight: false,
 				value: false,
 				remarks: false
-				// IF A USER DOESN'T FILL IN A FIELD, ALL WILL BE FALSE AND DATA SHOULD NOT BE DISPLAYED ON GET
+				// IF A USER DOESN'T FILL IN A FIELD, ALL WILL
+				// BE FALSE AND DATA SHOULD NOT BE DISPLAYED ON GET
 			}
 		}]
 		vetActions: {
@@ -127,10 +128,10 @@
 			vaccines: ["rabies", "feline leukemia"],
 			treatments: ["dental cleaning"]
 		},
-		miscNotes: "Any miscellaneous notes about the checkup in a text box.
-					Try to let the user use some formatting, like new lines.
-					Use regex to disallow any HTML or special characters which
-					would need to be escaped. Look up help!"
+		miscNotes: "Any miscellaneous notes about the checkup in a text box."
+					// Try to let the user use some formatting, like new lines.
+					// Use regex to disallow any HTML or special characters which
+					// would need to be escaped. Look up help!
 	}
 ]}
 ```
