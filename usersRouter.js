@@ -8,7 +8,9 @@ Users.create("Alex", "eqaddictedfool@gmail.com", "LookAtMe1", false);
 Users.create("Sarah", "sarahmariehamilton@gmail.com", "ImTheFavorite", true);
 
 router.get("/", (req, res) => {
-	res.json(Users.get());
+	res.status(200).json(Users.get());
+	// RIGHT NOW THIS DISPLAYS PASSWORDS.
+	// I WANT TO AVOID SHOWING PASSWORDS, EVEN ENCRYPTED AND FAKE ONES.
 });
 
 router.post("/", (req, res) => {
