@@ -32,3 +32,29 @@ describe("Users", function() {
 			})
 		})
 });
+
+describe("Pets", function() {
+	before(function() {
+		return runServer();
+	});
+
+	after(function() {
+		return closeServer();
+	});
+
+	it("should list pets on GET", function() {
+		return chai
+			.request(app)
+			.get("/users")
+			.then(function(res) {
+				expect(res).to.have.status(200);
+				expect(res).to.be.json;
+				expect(res.body).to.be.an("array");
+				expect(res.body.length).to.be.at.least(1);
+				const expectedKeys = ["id", "name", "species", "breed", "weightUnits", "birthDate", "photoUrl", "owners", "checkups"];
+				res.body.forEach(function(pet) {
+					expect(pet).to.inclue.keys(expectedKeys);
+				});
+			})
+	});
+})
