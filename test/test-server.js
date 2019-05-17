@@ -53,7 +53,7 @@ describe("Pets", function() {
 				expect(res.body.length).to.be.at.least(1);
 				const expectedKeys = ["id", "name", "species", "breed", "weightUnits", "birthDate", "photoUrl", "owners", "checkups"];
 				res.body.forEach(function(pet) {
-					expect(pet).to.inclue.keys(expectedKeys);
+					expect(pet).to.include.keys(expectedKeys);
 				});
 			})
 	});

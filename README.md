@@ -11,10 +11,10 @@
 
 ### Feature Ideas
 * Users are able to share pets. More than one person may care for a pet.
-	* "Please enter the email of other caregivers" (find the ID and add to pets owners array)
+	* "Please enter the email of other caregivers" (find the ID and add to pet's owners array)
 * If you remove a pet from your ownership, and you were the only owner the pet will be deleted, needs confirmation alert
 * All fields are editable on checkup edit - even if you initially didn't assign any value to them.
-* Users can highlight fields on the checkup entry form to masrk them so they are either positive, negative, or neutral.
+* Users can highlight fields on the checkup entry form to mark them so they are either positive, negative, or neutral. Neutral by default.
 	* Pos/neg highlights will be displayed on checkups list. This way, it will stand out on the checkup summary and the user can give details to their vet quickly at an appointment.
 * After a user edits a checkup, delete fields they deleted and add (assign) fields they added information to.
 * Checkup entry form has checkboxes with dropdowns to display fields the user wants to enter data for.
