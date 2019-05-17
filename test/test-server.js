@@ -45,7 +45,7 @@ describe("Pets", function() {
 	it("should list pets on GET", function() {
 		return chai
 			.request(app)
-			.get("/users")
+			.get("/pets")
 			.then(function(res) {
 				expect(res).to.have.status(200);
 				expect(res).to.be.json;
