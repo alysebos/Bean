@@ -4,7 +4,7 @@ const morgan = require("morgan");
 const app = express();
 app.use(express.json());
 
-//const petsRouter = require("./petsRouter");
+const petsRouter = require("./petsRouter");
 const usersRouter = require("./usersRouter");
 //const checkupsRouter = require("./checkupsRouter");
 
@@ -16,7 +16,7 @@ app.get("/", (req, res) => {
 	res.sendFile(__dirname + "/index.html");
 });
 
-//app.use("/pets", petsRouter);
+app.use("/pets", petsRouter);
 app.use("/users", usersRouter);
 //app.use("/checkups", checkupsRouter);
 
