@@ -1,5 +1,11 @@
 # :) Hello!
 
+## Link to app
+
+**Note**: It doesn't really work!
+
+[Link to Bean](https://mighty-cliffs-27784.herokuapp.com/)
+
 ## Notes for myself
 
 *A Trello board would probably be a better place for this, I know... Working on a solution*
