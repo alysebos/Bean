@@ -77,12 +77,12 @@ const Pets = {
 	update: function(updatedPet) {
 		console.log(`Updating pet \`${updatedPet.id}\``);
 		if(!(updatedPet.id in this.items)) {
-			throw storageException(
+			throw StorageException(
 				`Can't update pet \`${updatedPet.id}\` because no pet exists`
 				);
 		};
-		this.items[id].assign(updatedPet);
-		return this.items[id];
+		Object.assign(this.items[updatedPet.id], updatedPet);
+		return this.items[updatedPet.id];
 	},
 	delete: function(id) {
 		console.log(`deleting pet \`${id}\``);

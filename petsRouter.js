@@ -72,10 +72,52 @@ router.post("/", (req, res) => {
 });
 
 router.put("/:id", (req, res) => {
+	// CHECK IF REQUIRED FIELDS ARE IN THE REQUEST
+	const requiredFields = ["id", "name", "species", "breed", "weightUnits", "birthDate", "owners"];
+	let message = missingField(req.body, requiredFields);
+	if (message) {
+		console.error(message);
+		return res.status(400).send(message);
+	}
+	// CHECK IF ID IN BODY MATCHES ID IN PATH
+	if (req.body.id != req.params.id) {
+		const message = `ID in request path URL (\`${req.params.id}\` must match ID in the request body (\`${req.body.id}\`)`;
+		console.error(message);
+		return res.status(400).send(message);
+	}
+	// SET UP UPDATE OBJECT
+	const updatedPet = {
+		id: req.body.id,
+		name: req.body.name,
+		species: req.body.species,
+		breed: req.body.breed,
+		weightUnits: req.body.weightUnits,
+		birthDate: req.body.birthDate,
+		owners: req.body.owners
+	}
+	// CONVERT EMAILS TO IDS IN OWNERS ARRAY
+	for(let i = 0; i < updatedPet.owners.length; i++) {
+		if(isEmail(updatedPet.owners[i])) {
+			updatedPet.owners[i] = findUserFromEmail(updatedPet.owners[i]).id;
+		};
+	}
+	// ADD PET TO USERS' PETS ARRAY IF IT'S NOT ALREADY THERE
+	updatedPet.owners.forEach(owner => {
+		if (Users.items[owner].pets.indexOf(updatedPet.id) == -1) {
+			Users.items[owner].pets.push(updatedPet.id);
+		}
+	});
+	res.status(201).json(Pets.update(updatedPet));
 });
 
 router.delete("/:id", (req, res) => {
+	// FIRST DELETE THE PET FROM EVERY USER WHO OWNS IT
 
+	// NEXT DELETE THE CHECKUPS ASSOCIATED WITH THAT PET
+
+	// NEXT, DELETE THE PET
+	Pets.delete(req.params.id);
+	res.status(204).end();
 });
 
 module.exports = router;
