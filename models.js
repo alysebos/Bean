@@ -67,9 +67,12 @@ const Pets = {
 		this.items[pet.id] = pet;
 		return pet;
 	},
-	get: function() {
+	get: function(id) {
 		console.log("Retrieving pets");
-		return Object.keys(this.items).map(key => this.items[key])
+		if(!id) {
+			return Object.keys(this.items).map(key => this.items[key]);
+		}
+		return this.items[id];
 	},
 	update: function(updatedPet) {
 		console.log(`Updating pet \`${updatedPet.id}\``);
