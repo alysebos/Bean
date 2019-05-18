@@ -59,7 +59,7 @@ router.post("/", (req, res) => {
 		req.body.owner = findUserFromEmail(req.body.owner).id;
 	}
 	// MAKE SURE THE OWNER EXISTS
-	else if (!Users.items[req.body.owner]) {
+	else if (!Users.get()[req.body.owner]) {
 		const message = `\`${req.body.owner}\` cannot care for \`${req.body.name}\` because they do not exist`;
 		console.error(message);
 		return res.status(400).send(message);
@@ -103,7 +103,7 @@ router.put("/:id", (req, res) => {
 	}
 	// ADD PET TO USERS' PETS ARRAY IF IT'S NOT ALREADY THERE
 	updatedPet.owners.forEach(owner => {
-		if (Users.items[owner].pets.indexOf(updatedPet.id) == -1) {
+		if (Users.get().find(user => {return user.id === owner}).pets.indexOf(updatedPet.id) == -1) {
 			Users.items[owner].pets.push(updatedPet.id);
 		}
 	});
