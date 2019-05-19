@@ -14,7 +14,7 @@ Users.items[Users.get()[1].id].pets.push(Pets.create("Bean", "Cat", "American Lo
 
 const { missingField } = require("./missingField");
 const { isEmail } = require("./isEmail");
-const { findUserFromEmail } = require("./FindUserFromEmail");
+const { findUserFromEmail } = require("./findUserFromEmail");
 const { findOwnersOfPets } = require("./findOwnersOfPets");
 
 router.get("/", (req, res) => {
