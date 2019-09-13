@@ -159,7 +159,7 @@ const checkupSchema = mongoose.Schema({
 		vaccines: [String],
 		treatments: [String]
 	},
-	miscNotes: { type: String, required: true }
+	miscNotes: String
 });
 
 const User = mongoose.model("User", userSchema);
