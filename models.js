@@ -1,102 +1,54 @@
-const uuid = require("uuid");
+"use strict";
 
-function StorageException(message) {
-	this.message = message;
-	this.name = "StorageException";
-}
+const mongoose = require("mongoose");
 
-const Users = {
-	create: function(firstName, email, password, notifications) {
-		console.log("Creating a new user");
-		const user = {
-			id: uuid.v4(),
-			firstName: firstName,
-			email: email,
-			password: password,
-			profilePhoto: false,
-			preferences: {
-				notifications: notifications,
-				language: "en-us",
-				timeZone: "pacific"
-			},
-			pets: []
-		};
-		this.items[user.id] = user;
-		return user;
-	},
-	get: function() {
-		console.log("Retrieving users");
-		return Object.keys(this.items).map(key => this.items[key]);
-	},
-	update: function(updatedUser) {
-		console.log(`Updating user \`${updatedUser.id}\``);
-		if(!(updatedUser.id in this.items)) {
-			throw StorageException(
-				`Can't update user \`${updatedUser.id}\` because no user exists`
-				);
-		};
-		this.items[id].assign(updatedUser);
-		return this.items[id];
-	},
-	delete: function(id) {
-		console.log(`Deleting user \`${id}\``);
-		delete this.items[id];
-	}
+const userSchema = mongoose.Schema({
+	firstName: { type: String, required: true },
+	email: { type: String, required: true },
+	password: { type: String, required: true }
+});
+
+userSchema.methods.serialize = function() {
+	return {
+		id: this._id,
+		firstName: this.firstName,
+		email: this.email
+	};
 };
 
-function createUsers() {
-	const storage = Object.create(Users);
-	storage.items = {};
-	return storage;
+const petSchema = mongoose.Schema({
+	name: { type: String, required: true },
+	species: { type: String, required: true },
+	breed: { type: String, required: true },
+	birthDate: { type: String, required: true },
+	weightUnits: { type: String, required: true },
+	owner: { type: String, required: true}
+});
+
+petSchema.methods.serialize = function() {
+	return {
+		id: this._id,
+		name: this.name,
+		species: this.species,
+		breed: this.breed,
+		birthDate: this.birthDate,
+		weightUnits: this.weightUnits,
+		owner: this.owners
+	};
 };
 
-const Pets = {
-	create: function(name, species, breed, birthDate, weightUnits, photoUrl, owner) {
-		console.log("Creating a new pet");
-		const pet = {
-			id: uuid.v4(),
-			name: name,
-			species: species,
-			breed: breed,
-			birthDate: birthDate,
-			weightUnits: weightUnits,
-			photoUrl: photoUrl,
-			owners: [owner],
-			checkups: []
-		};
-		this.items[pet.id] = pet;
-		return pet;
-	},
-	get: function(id) {
-		console.log("Retrieving pets");
-		if(!id) {
-			return Object.keys(this.items).map(key => this.items[key]);
-		}
-		return this.items[id];
-	},
-	update: function(updatedPet) {
-		console.log(`Updating pet \`${updatedPet.id}\``);
-		if(!(updatedPet.id in this.items)) {
-			throw StorageException(
-				`Can't update pet \`${updatedPet.id}\` because no pet exists`
-				);
-		};
-		Object.assign(this.items[updatedPet.id], updatedPet);
-		return this.items[updatedPet.id];
-	},
-	delete: function(id) {
-		console.log(`deleting pet \`${id}\``);
-		delete this.items[id];
-	}
+const checkupSchema = mongoose.Schema({
+
+});
+
+checkupSchema.methods.serialize = function() {
+	return {
+
+	};
 };
 
-function createPets() {
-	const storage = Object.create(Pets);
-	storage.items = {};
-	return storage;
-};
+const User = mongoose.model("User", userSchema);
+const Pet = mongoose.model("Pet", petSchema);
+const Checkup = mongoose.model("Checkup", checkupSchema);
 
-module.exports = {
-	Users: createUsers(),
-	Pets: createPets()
-}
+module.exports = { User, Pet, Checkup };
