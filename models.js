@@ -38,14 +38,39 @@ petSchema.methods.serialize = function() {
 };
 
 const checkupSchema = mongoose.Schema({
-
+	pet: { type: String, required: true },
+	owner: { type: String, required: true },
+	date: { type: String, required: true },
+	vet:  { type: Boolean, required: true },
+	physical: [
+		trait: {
+			highlight: Boolean
+			value: String,
+			remark: String
+		}
+	],
+	nonPhysical: [
+		trait: {
+			highlight: Boolean
+			value: String,
+			remark: String
+		}
+	],
+	vetActions: {
+		prescriptions: [
+			{
+				name: String,
+				frequency: String,
+				duration: String,
+				dose: String,
+				application: String
+			}
+		],
+		vaccines: [String],
+		treatments: [String]
+	},
+	miscNotes: { type: String, required: true }
 });
-
-checkupSchema.methods.serialize = function() {
-	return {
-
-	};
-};
 
 const User = mongoose.model("User", userSchema);
 const Pet = mongoose.model("Pet", petSchema);
