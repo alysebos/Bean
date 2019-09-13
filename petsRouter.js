@@ -3,9 +3,6 @@ const router = express.Router();
 
 const { Pet, User, Checkup } = require("./models");
 
-// I TRIED TO MAKE IT CREATE A PET AT THE SAME
-// TIME THAT IT ADDS THE PET TO THE USER'S ARRAY
-
 const { missingField } = require("./missingField");
 
 router.get("/", (req, res) => {
@@ -14,7 +11,7 @@ router.get("/", (req, res) => {
 		console.error(message);
 		return res.status(400).json({ message: message });
 	};
-	Pet.find({ owners: req.body.ownerId })
+	Pet.find({ owner: req.body.ownerId })
 		.then(pets => {
 			res.json({
 				pets: pets.map(pet => pet.serialize())
@@ -56,16 +53,16 @@ router.post("/", (req, res) => {
 		return res.status(400).json({ message: message });
 	}
 	// MAKE SURE THE OWNER EXISTS
-	User.findById(req.body.owner)
+	User.findById(req.body.ownerId)
 		.then(user => {
 			Pet
 				.create({
 					name: req.body.name,
 					species: req.body.species,
 					breed: req.body.breed,
-					birthDate: new Date(req.body.birthDate),
+					birthDate: new Date(req.body.birthDate + " 00:00:00"),
 					weightUnits: req.body.weightUnits,
-					owner: req.body.ownerId})
+					owner: user._id})
 				.then(pet => {
 					res.status(200).json(pet.serialize());
 				})
@@ -88,23 +85,52 @@ router.put("/:id", (req, res) => {
 		console.error(message);
 		return res.status(400).json({ message: message });
 	}
+	// MAKE SURE THE OWNER ID EXISTS
+	if (!req.body.ownerId) {
+		const message = `Missing ownerId in request body`;
+		console.error(message);
+		return res.status(400).json({ message: message });
+	}
 	// SET UPDATE OBJECT AND FIELDS WE ARE ALLOWED TO UPDATE
 	const newPet = {};
 	const updateableFields = ["name", "species", "breed", "birthDate", "weightUnits"];
 	// BUILD THE UPDATE OBJECT
 	updateableFields.forEach(field => {
 		if (field in req.body) {
-			newPet[field] = req.body[field];
+			if (field === "birthDate") {
+				newPet[field] = new Date(req.body[field] + " 00:00:00");
+			}
+			else {
+				newPet[field] = req.body[field];
+			}
 		}
 	});
-	// DO THE UPDATE
+	// CHECK IF THE PET IS OWNED BY THIS OWNER
 	Pet
-		.findByIdAndUpdate(req.params.id, {$set: newPet })
-		.then(pet => res.status(204).end())
-		.catch(err => res.status(500).json({ message: "Internal server error" }));
+		.findById(req.params.id)
+			.then(pet =>{
+				if (pet.owner != req.body.ownerId) {
+					const message = `${req.body.ownerId} doesn't own ${req.params.id}`;
+					console.error(message);
+					return res.status(400).json({ message: message });
+				}
+				else {	
+					// DO THE UPDATE
+					Pet
+						.findByIdAndUpdate(req.params.id, { $set: newPet })
+						.then(pet => res.status(204).end())
+						.catch(err => res.status(500).json({ message: "Internal server error" }));
+				}
+			})
 });
 
 router.delete("/:id", (req, res) => {
+	// MAKE SURE THE OWNER ID IS PROVIDED	
+	if (!req.body.ownerId) {
+		const message = `Missing ownerId in request body`;
+		console.error(message);
+		return res.status(400).json({ message: message });
+	}
 	// DELETE ANY CHECKUPS ASSOCIATED WITH THE PET
 
 	// DELETE THE PET
@@ -115,8 +141,10 @@ router.delete("/:id", (req, res) => {
 				console.error(message);
 				return res.status(400).json({ message: message });
 			}
-			Pet.findByIdAndRemove(req.params.id)
-				.then(pet => res.status(204).end())
+			else {
+				Pet.findByIdAndRemove(req.params.id)
+					.then(pet => res.status(204).end())
+			}
 		})
 		.catch(err => res.status(500).json({ message: "Not Found" }));
 });
