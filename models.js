@@ -43,14 +43,104 @@ const checkupSchema = mongoose.Schema({
 	date: { type: String, required: true },
 	vet:  { type: Boolean, required: true },
 	physical: [
-		trait: {
+		weight: {
+			highlight: Boolean
+			value: Number,
+			remark: String
+		},
+		temperature: {
+			highlight: Boolean
+			value: Number,
+			remark: String
+		},
+		pulse: {
+			highlight: Boolean
+			value: String,
+			remark: String
+		},
+		respiration: {
+			highlight: Boolean
+			value: String,
+			remark: String
+		},
+		abdomen: {
+			highlight: Boolean
+			value: String,
+			remark: String
+		},
+		legs: {
+			highlight: Boolean
+			value: String,
+			remark: String
+		},
+		feet: {
+			highlight: Boolean
+			value: String,
+			remark: String
+		},
+		joints: {
+			highlight: Boolean
+			value: String,
+			remark: String
+		},
+		genitals: {
+			highlight: Boolean
+			value: String,
+			remark: String
+		},
+		anus: {
+			highlight: Boolean
+			value: String,
+			remark: String
+		},
+		ears: {
+			highlight: Boolean
+			value: String,
+			remark: String
+		},
+		eyes: {
+			highlight: Boolean
+			value: String,
+			remark: String
+		},
+		mouth: {
+			highlight: Boolean
+			value: String,
+			remark: String
+		},
+		coat: {
+			highlight: Boolean
+			value: String,
+			remark: String
+		},
+		waste: {
+			highlight: Boolean
+			value: String,
+			remark: String
+		},
+		claws: {
 			highlight: Boolean
 			value: String,
 			remark: String
 		}
 	],
 	nonPhysical: [
-		trait: {
+		temperament: {
+			highlight: Boolean
+			value: String,
+			remark: String
+		},
+		diet: {
+			highlight: Boolean
+			value: String,
+			remark: String
+		},
+		wasteHabits: {
+			highlight: Boolean
+			value: String,
+			remark: String
+		},
+		energyLevel: {
 			highlight: Boolean
 			value: String,
 			remark: String
