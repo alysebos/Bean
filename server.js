@@ -14,7 +14,7 @@ app.use(express.json());
 
 const petsRouter = require("./petsRouter");
 const usersRouter = require("./usersRouter");
-//const checkupsRouter = require("./checkupsRouter");
+const checkupsRouter = require("./checkupsRouter");
 
 app.use(morgan("common"));
 
@@ -26,7 +26,7 @@ app.get("/", (req, res) => {
 
 app.use("/pets", petsRouter);
 app.use("/users", usersRouter);
-//app.use("/checkups", checkupsRouter);
+app.use("/checkups", checkupsRouter);
 
 let server;
 

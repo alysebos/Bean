@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 
 const userSchema = mongoose.Schema({
 	firstName: { type: String, required: true },
-	email: { type: String, required: true },
+	email: { type: String, required: true, unique: true },
 	password: { type: String, required: true }
 });
 
@@ -25,126 +25,114 @@ const petSchema = mongoose.Schema({
 	owner: { type: String, required: true}
 });
 
-petSchema.methods.serialize = function() {
-	return {
-		id: this._id,
-		name: this.name,
-		species: this.species,
-		breed: this.breed,
-		birthDate: this.birthDate,
-		weightUnits: this.weightUnits,
-		owner: this.owners
-	};
-};
-
 const checkupSchema = mongoose.Schema({
 	pet: { type: String, required: true },
 	owner: { type: String, required: true },
 	date: { type: String, required: true },
 	vet:  { type: Boolean, required: true },
 	physical: [
-		weight: {
-			highlight: Boolean
+		{weight: {
+			highlight: Boolean,
 			value: Number,
 			remark: String
-		},
-		temperature: {
-			highlight: Boolean
+		}},
+		{temperature: {
+			highlight: Boolean,
 			value: Number,
 			remark: String
-		},
-		pulse: {
-			highlight: Boolean
+		}},
+		{pulse: {
+			highlight: Boolean,
 			value: String,
 			remark: String
-		},
-		respiration: {
-			highlight: Boolean
+		}},
+		{respiration: {
+			highlight: Boolean,
 			value: String,
 			remark: String
-		},
-		abdomen: {
-			highlight: Boolean
+		}},
+		{abdomen: {
+			highlight: Boolean,
 			value: String,
 			remark: String
-		},
-		legs: {
-			highlight: Boolean
+		}},
+		{legs: {
+			highlight: Boolean,
 			value: String,
 			remark: String
-		},
-		feet: {
-			highlight: Boolean
+		}},
+		{feet: {
+			highlight: Boolean,
 			value: String,
 			remark: String
-		},
-		joints: {
-			highlight: Boolean
+		}},
+		{joints: {
+			highlight: Boolean,
 			value: String,
 			remark: String
-		},
-		genitals: {
-			highlight: Boolean
+		}},
+		{genitals: {
+			highlight: Boolean,
 			value: String,
 			remark: String
-		},
-		anus: {
-			highlight: Boolean
+		}},
+		{anus: {
+			highlight: Boolean,
 			value: String,
 			remark: String
-		},
-		ears: {
-			highlight: Boolean
+		}},
+		{ears: {
+			highlight: Boolean,
 			value: String,
 			remark: String
-		},
-		eyes: {
-			highlight: Boolean
+		}},
+		{eyes: {
+			highlight: Boolean,
 			value: String,
 			remark: String
-		},
-		mouth: {
-			highlight: Boolean
+		}},
+		{mouth: {
+			highlight: Boolean,
 			value: String,
 			remark: String
-		},
-		coat: {
-			highlight: Boolean
+		}},
+		{coat: {
+			highlight: Boolean,
 			value: String,
 			remark: String
-		},
-		waste: {
-			highlight: Boolean
+		}},
+		{waste: {
+			highlight: Boolean,
 			value: String,
 			remark: String
-		},
-		claws: {
-			highlight: Boolean
+		}},
+		{claws: {
+			highlight: Boolean,
 			value: String,
 			remark: String
-		}
+		}}
 	],
 	nonPhysical: [
-		temperament: {
-			highlight: Boolean
+		{temperament: {
+			highlight: Boolean,
 			value: String,
 			remark: String
-		},
-		diet: {
-			highlight: Boolean
+		}},
+		{diet: {
+			highlight: Boolean,
 			value: String,
 			remark: String
-		},
-		wasteHabits: {
-			highlight: Boolean
+		}},
+		{wasteHabits: {
+			highlight: Boolean,
 			value: String,
 			remark: String
-		},
-		energyLevel: {
-			highlight: Boolean
+		}},
+		{energyLevel: {
+			highlight: Boolean,
 			value: String,
 			remark: String
-		}
+		}}
 	],
 	vetActions: {
 		prescriptions: [

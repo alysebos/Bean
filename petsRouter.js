@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 
 const { Pet, User, Checkup } = require("./models");
-
 const { missingField } = require("./missingField");
 
 router.get("/", (req, res) => {
@@ -14,7 +13,7 @@ router.get("/", (req, res) => {
 	Pet.find({ owner: req.body.ownerId })
 		.then(pets => {
 			res.json({
-				pets: pets.map(pet => pet.serialize())
+				pets: pets
 			});
 		})
 		.catch(err => {
@@ -31,12 +30,12 @@ router.get("/:id", (req, res) => {
 	};
 	Pet.findById(req.params.id)
 		.then(pet => {
-			if (!(req.body.ownerId == pet.owner)) {
+			if (req.body.ownerId != pet.owner) {
 				const message = `${req.body.ownerId} doesn't own ${req.params.id}`
 				console.error(message);
 				return res.status(400).json({ message: message });
 			}
-			res.json(pet.serialize())
+			else { res.json(pet) };
 		})
 		.catch(err => {
 			console.error(err);
@@ -52,29 +51,38 @@ router.post("/", (req, res) => {
 		console.error(message);
 		return res.status(400).json({ message: message });
 	}
+	else {
 	// MAKE SURE THE OWNER EXISTS
-	User.findById(req.body.ownerId)
-		.then(user => {
-			Pet
-				.create({
-					name: req.body.name,
-					species: req.body.species,
-					breed: req.body.breed,
-					birthDate: new Date(req.body.birthDate + " 00:00:00"),
-					weightUnits: req.body.weightUnits,
-					owner: user._id})
-				.then(pet => {
-					res.status(200).json(pet.serialize());
-				})
-				.catch(err => {
-					console.error(err);
-					res.status(500).json({ message: "Internal server error" });
-				});
-		})
-		.catch(err => {
-			let message = `No user with that ID`;
-			return res.status(400).json({ message: message });
-		})
+		User.findById(req.body.ownerId)
+			.then(user => {
+				if (!user.firstName) {
+					let message = `No user with that ID`;
+					console.error(message);
+					return res.status(400).json({ message: message });
+				}
+				else {
+					Pet
+						.create({
+							name: req.body.name,
+							species: req.body.species,
+							breed: req.body.breed,
+							birthDate: new Date(req.body.birthDate + " 00:00:00"),
+							weightUnits: req.body.weightUnits,
+							owner: user._id})
+						.then(pet => {
+							res.status(200).json(pet);
+						})
+						.catch(err => {
+							console.error(err);
+							res.status(500).json({ message: "Internal server error" });
+						});
+				}
+			})
+			.catch(err => {
+				let message = `No user with that ID`;
+				return res.status(400).json({ message: message });
+			})
+	}
 });
 
 router.put("/:id", (req, res) => {
@@ -131,19 +139,21 @@ router.delete("/:id", (req, res) => {
 		console.error(message);
 		return res.status(400).json({ message: message });
 	}
-	// DELETE ANY CHECKUPS ASSOCIATED WITH THE PET
-
 	// DELETE THE PET
 	Pet.findById(req.params.id)
 		.then(pet => {
-			if (!(req.body.ownerId == pet.owner)) {
+			if (req.body.ownerId != pet.owner) {
 				const message = `Owner ${req.body.ownerId} doesn't own ${req.params.id}`;
 				console.error(message);
 				return res.status(400).json({ message: message });
 			}
 			else {
-				Pet.findByIdAndRemove(req.params.id)
-					.then(pet => res.status(204).end())
+				// DELETE ANY CHECKUPS FROM THAT PET
+				Checkup.deleteMany({ pet: req.params.id })
+					.then(checkup => {
+						Pet.findByIdAndRemove(req.params.id)
+						.then(pet => res.status(204).end())
+					})
 			}
 		})
 		.catch(err => res.status(500).json({ message: "Not Found" }));
