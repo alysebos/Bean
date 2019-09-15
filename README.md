@@ -2,7 +2,7 @@
 
 ## Links to app
 
-**Note**: It doesn't really work!
+**Note**: It doesn't really work, yet!
 
 [Link to Bean Deployment](https://fathomless-hamlet-56105.herokuapp.com/)
 
