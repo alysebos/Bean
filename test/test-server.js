@@ -2,59 +2,116 @@ const chai = require("chai");
 const chaiHttp = require("chai-http");
 
 const { app, runServer, closeServer } = require("../server");
+const { User, Pet, Checkup } = require("../models");
+const { TEST_DATABASE_URL } = require("../config");
+
+const mongoose = require("mongoose");
+const faker = require("faker");
 
 const expect = chai.expect;
 
 chai.use(chaiHttp);
 
-describe("Users", function() {
-	before(function() {
-		return runServer();
-	});
+let userId;
+let petId;
+let checkupId;
 
-	after(function() {
-		return closeServer();
-	});
+function setUserId () {
+	return User.findOne()._id;
+}
 
-	it("should list users on GET", function() {
-		return chai
-			.request(app)
-			.get("/users")
-			.then(function(res) {
-				expect(res).to.have.status(200);
-				expect(res).to.be.json;
-				expect(res.body).to.be.an("array");
-				expect(res.body.length).to.be.at.least(1);
-				const expectedKeys = ["id", "firstName", "email", "preferences", "profilePhoto", "pets"];
-				res.body.forEach(function(user) {
-					expect(user).to.include.keys(expectedKeys);
-				});
+function setPetId () {
+	return Pet.findOne()._id;
+}
+
+function setCheckupId () {
+	return Checkup.findOne()._id;
+}
+
+function seedUserData () {
+	console.info("seeding user data");
+	const seedData = [];
+
+	for (let i = 0; i < 10; i++) {
+		seedData.push(generateRestaurantData());
+	}
+
+	return Restaurant.insertMany(seedData);
+}
+
+function generateUserDate () {
+	return {
+		firstName: faker.name.firstName(),
+		email: faker.internet.email(),
+		password: faker.internet.password()
+	}
+}
+
+function seedPetData () {
+	console.info("seeding pet data");
+	const seedData = [];
+
+	for (let i = 0; i < 10; i++) {
+		seedData.push(generatePetData());
+	}
+
+	return Pet.insertMany(seedData);
+}
+
+function generatePetData () {
+	return {
+		name: faker.name.firstName(),
+		species: faker.address.country(),
+		breed: faker.address.city(),
+		weightUnits: "lbs",
+		birthDate: faker.date.past(),
+		ownerId: userId
+	}
+}
+
+function seedCheckupData () {
+	console.info("seeding checkup data");
+	const seedData = [];
+
+	for (let i = 0; i < 10; i++) {
+		seedData.push(generateCheckupData());
+	}
+
+	return Checkup.insertMany(seedData);
+}
+
+function generateCheckupData () {
+	return {
+		pet: petId,
+		owner: userId,
+		date: faker.date.recent(),
+		vet: faker.random.boolean(),
+		physical: {
+
+		}
+	}
+}
+
+function tearDownDB () {
+
+}
+
+describe("Bean Application", function () {
+	before(function () {
+		return runServer(TEST_DATABASE_URL)
+	})
+	beforeEach(function () {
+		seedUserData()
+			.then(users => {
+				userId = setUserId();
+				seedPetData()
+				.then(pets => {
+					petId = setPetId();
+					seedCheckupData()
+						.then(checkups => {
+							checkupId = setCheckupId();
+						})
+				})
 			})
-		})
-});
-
-describe("Pets", function() {
-	before(function() {
-		return runServer();
-	});
-
-	after(function() {
-		return closeServer();
-	});
-
-	it("should list pets on GET", function() {
-		return chai
-			.request(app)
-			.get("/pets")
-			.then(function(res) {
-				expect(res).to.have.status(200);
-				expect(res).to.be.json;
-				expect(res.body).to.be.an("array");
-				expect(res.body.length).to.be.at.least(1);
-				const expectedKeys = ["id", "name", "species", "breed", "weightUnits", "birthDate", "photoUrl", "owners", "checkups"];
-				res.body.forEach(function(pet) {
-					expect(pet).to.include.keys(expectedKeys);
-				});
-			})
-	});
+	})
 })

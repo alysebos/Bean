@@ -38,7 +38,7 @@ const checkupSchema = mongoose.Schema({
 		}},
 		{temperature: {
 			highlight: Boolean,
-			value: Number,
+			value: String,
 			remark: String
 		}},
 		{pulse: {
