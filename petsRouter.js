@@ -45,15 +45,15 @@ router.get("/:id", (req, res) => {
 
 router.post("/", (req, res) => {
 	// CHECK IF REQUIRED FIELDS ARE IN THE REQUEST
-	const requiredFields = ["name", "species", "breed", "weightUnits", "birthDate", "ownerId"];
+	const requiredFields = ["name", "species", "breed", "weightUnits", "birthDate", "owner"];
 	let message = missingField(req.body, requiredFields);
 	if (message) {
-		console.error(message);
+		console.error(message);4
 		return res.status(400).json({ message: message });
 	}
 	else {
 	// MAKE SURE THE OWNER EXISTS
-		User.findById(req.body.ownerId)
+		User.findById(req.body.owner)
 			.then(user => {
 				if (!user.firstName) {
 					let message = `No user with that ID`;
@@ -94,8 +94,8 @@ router.put("/:id", (req, res) => {
 		return res.status(400).json({ message: message });
 	}
 	// MAKE SURE THE OWNER ID EXISTS
-	if (!req.body.ownerId) {
-		const message = `Missing ownerId in request body`;
+	if (!req.body.owner) {
+		const message = `Missing owner in request body`;
 		console.error(message);
 		return res.status(400).json({ message: message });
 	}
@@ -117,8 +117,8 @@ router.put("/:id", (req, res) => {
 	Pet
 		.findById(req.params.id)
 			.then(pet =>{
-				if (pet.owner != req.body.ownerId) {
-					const message = `${req.body.ownerId} doesn't own ${req.params.id}`;
+				if (pet.owner != req.body.owner) {
+					const message = `${req.body.owner} doesn't own ${req.params.id}`;
 					console.error(message);
 					return res.status(400).json({ message: message });
 				}

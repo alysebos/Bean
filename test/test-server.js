@@ -179,4 +179,93 @@ describe("Bean Application", function () {
 		})
 	})
 
+	describe("Pet endpoints", function() {
+		it("should list logged in user's pets on GET", function() {
+			return chai.request(app)
+				.get('/pets')
+				.send({ownerId: userId})
+				.then(function (res) {
+					expect(res).to.have.status(200);
+					expect(res).to.be.json;
+					expect(res.body.pets.length).to.be.gt(0);
+					res.body.pets.forEach(function (pet) {
+						expect(pet.owner).to.equal(userId.toString());
+					})
+					return res.body.pets[0];
+				})
+				.then(function (pet) {
+					expect(pet).to.be.an("object");
+					expect(pet).to.include.keys("_id","name","species","breed","weightUnits","birthDate","owner");
+				})
+		})
+
+		it("should list details of a specific pet on GET /:id", function() {
+			return chai.request(app)
+				.get(`/pets/${petId}`)
+				.send({ownerId: userId})
+				.then(function (res) {
+					expect(res).to.have.status(200);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an("object");
+					expect(res.body).to.include.keys("_id","name","species","breed","weightUnits","birthDate","owner");
+				})
+		})
+
+		it("should post a new pet on POST", function() {
+			const newPet = generatePetData();
+			return chai.request(app)
+				.post('/pets')
+				.send(newPet)
+				.then(function (res) {
+					expect(res).to.have.status(200);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+					expect(res.body).to.include.keys("_id","name","species","breed","weightUnits","birthDate","owner");
+					expect(res.body.name).to.equal(newPet.name);
+					expect(res.body.species).to.equal(newPet.species);
+					expect(res.body.breed).to.equal(newPet.breed);
+					expect(res.body.weightUnits).to.equal(newPet.weightUnits);
+					expect(res.body.owner).to.equal(newPet.owner.toString());
+				})
+		})
+
+		it("should update existing pet on PUT /:id", function() {
+			const updatedPet = generatePetData();
+			updatedPet.id = petId;
+			return chai.request(app)
+				.put(`/pets/${petId}`)
+				.send(updatedPet)
+				.then(function (res) {
+					expect(res).to.have.status(204);
+					return Pet.findOne(petId);
+				})
+				.then(function (pet) {
+					expect(pet).to.be.an("object");
+					expect(pet.name).to.equal(updatedPet.name);
+					expect(pet.species).to.equal(updatedPet.species);
+					expect(pet.breed).to.equal(updatedPet.breed);
+					expect(pet.weightUnits).to.equal(updatedPet.weightUnits);
+					expect(pet.owner.toString()).to.equal(updatedPet.owner.toString());
+					expect(pet._id.toString()).to.equal(updatedPet.id.toString());
+				})
+		})
+
+		it("should delete a pet on DELETE /:id", function() {
+			return chai.request(app)
+				.delete(`/pets/${petId}`)
+				.send({ ownerId: userId })
+				.then(function (res) {
+					expect(res).to.have.status(204);
+					return Pet.findOne(petId);
+				})
+				.then(function (pet) {
+					expect(pet).to.equal(null);
+					return Checkup.find({pet: petId});
+				})
+				.then(function (checkups) {
+					expect(checkups.length).to.equal(0);
+				})
+		})
+	})
+
 })
