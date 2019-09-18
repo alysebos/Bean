@@ -171,6 +171,10 @@ describe("Bean Application", function () {
 				})
 				.then(function (pets) {
 					expect(pets.length).to.equal(0);
+					return Checkup.find({owner: userId});
+				})
+				.then(function(checkups) {
+					expect(checkups.length).to.equal(0);
 				})
 		})
 	})
