@@ -268,4 +268,88 @@ describe("Bean Application", function () {
 		})
 	})
 
+	describe("Checkup endpoints", function() {
+		it("should display all checkups for a pet on GET /:id", function () {
+			return chai.request(app)
+				.get(`/checkups/${petId}`)
+				.send({ownerId: userId})
+				.then(function(res) {
+					expect(res).to.have.status(200);
+					expect(res).to.be.json;
+					expect(res.body.checkups.length).to.be.gt(0);
+					res.body.checkups.forEach(function(checkup) {
+						expect(checkup.pet.toString()).to.equal(petId.toString());
+						expect(checkup.owner.toString()).to.equal(userId.toString());
+					})
+					return res.body.checkups[0];
+				})
+				.then(function(checkup) {
+					expect(checkup).to.be.an("object");
+					expect(checkup).to.include.keys("pet","owner","_id","vet","date");
+				})
+		})
+
+		it("should display checkup details for a specific checkup on GET /:id/:checkupid", function () {
+			return chai.request(app)
+				.get(`/checkups/${petId}/${checkupId}`)
+				.send({ownerId: userId})
+				.then(function(res) {
+					expect(res).to.have.status(200);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an("object");
+					expect(res.body).to.include.keys("pet","owner","_id","vet","date");
+					expect(res.body.owner.toString()).to.equal(userId.toString());
+					expect(res.body.pet.toString()).to.equal(petId.toString());
+				})
+		})
+
+		it("should post a new checkup on POST", function() {
+			const newCheckup = generateCheckupData();
+			return chai.request(app)
+				.post('/checkups')
+				.send(newCheckup)
+				.then(function (res) {
+					expect(res).to.have.status(200);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+					expect(res.body).to.include.keys("pet","owner","_id","vet","date");
+					expect(res.body.pet.toString()).to.equal(newCheckup.pet.toString());
+					expect(res.body.owner.toString()).to.equal(newCheckup.owner.toString());
+					expect(res.body.vet).to.equal(newCheckup.vet);
+				})
+		})
+
+		it("should update an existing checkup on PUT /:id", function() {
+			const updatedCheckup = generateCheckupData();
+			updatedCheckup.id = checkupId;
+			return chai.request(app)
+				.put(`/checkups/${checkupId}`)
+				.send(updatedCheckup)
+				.then(function(res) {
+					expect(res).to.have.status(204);
+					return Checkup.findOne(checkupId);
+				})
+				.then(function(checkup) {
+					expect(checkup).to.be.an("object");
+					expect(checkup.pet.toString()).to.equal(updatedCheckup.pet.toString());
+					expect(checkup.owner.toString()).to.equal(updatedCheckup.owner.toString());
+					expect(checkup.vet).to.equal(updatedCheckup.vet);
+					expect(checkup._id.toString()).to.equal(updatedCheckup.id.toString());
+				})
+		})
+
+		it("should delete a checkup on DELETE /:id", function() {
+			return chai.request(app)
+				.delete(`/checkups/${checkupId}`)
+				.send({ ownerId: userId })
+				.then(function (res) {
+					expect(res).to.have.status(204);
+					return Checkup.findOne(checkupId);
+				})
+				.then(function (pet) {
+					expect(pet).to.equal(null);
+				})
+		})
+	})
+
 })
