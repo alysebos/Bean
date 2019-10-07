@@ -4,14 +4,13 @@ const router = express.Router();
 const { User, Pet, Checkup } = require("./models");
 const { missingField } = require("./missingField");
 
-router.get("/:id", (req, res) => {
-	if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
-		const message =
-			`Request path id (${req.params.id}) and request body id (${req.body.id}) must match`;
+router.get("/", (req, res) => {
+	if (!req.body.id) {
+		const message = `Missing id in request body`;
 		console.error(message);
-		return res.status(400).json({ message: message });
+		return res.status(400).json({message: message});
 	}
-	User.findById(req.params.id)
+	User.findById(req.body.id)
 		.then(user => {
 			res.json(user.serialize());
 		})
@@ -21,16 +20,105 @@ router.get("/:id", (req, res) => {
 router.post("/", (req, res) => {
 	// CHECK IF REQUIRED FIELDS ARE IN THE REQUEST
 	const requiredFields = ["firstName", "email", "password"];
-	let message = missingField(req.body, requiredFields);
-	if (message) {
-		console.error(message);
-		return res.status(400).json({ message: message });
+	const missingField_ = missingField(req.body, requiredFields);
+
+	if (missingField_) {
+		return res.status(422).json({ 
+			code: 422,
+			reason: "ValidationError",
+			message: "Missing field",
+			location: missingField_
+		});
 	}
-	else {
-		User.create(req.body)
-			.then(user => res.status(201).json(user.serialize()))
-			.catch(err => res.status(500).json({ message: "Internal Server Error" }));
+
+	const stringFields = ["firstName", "email", "password"];
+	const nonStringField = stringFields.find(
+		field => field in req.body && typeof req.body[field] !== 'string'
+	);
+
+	if (nonStringField) {
+		return res.status(422).json({
+			code: 422,
+			reason: "ValidationError",
+			message: "Incorrect field type: expected string",
+			location: nonStringField
+		});
 	}
+
+	// ERROR IF WHITE SPACE IN PASSWORD
+	if (req.body.password.trim() != req.body.password) {
+		return res.status(422).json({
+			code: 422,
+			reason: 'ValidationError',
+			message: 'Cannot start or end with whitespace',
+			location: 'password'
+		});
+	}
+	// CHECK SIZE OF INPUT
+	const sizedFields = {
+		email:{
+			min: 1
+		},
+		password: {
+			min: 8,
+			max: 72
+		}
+	};
+	const tooSmallField = Object.keys(sizedFields).find(
+		field => 
+			'min' in sizedFields[field] &&
+				req.body[field].trim().length < sizedFields[field].min
+	);
+	const tooLargeField = Object.keys(sizedFields).find(
+		field =>
+			'max' in sizedFields[field] &&
+				req.body[field].trim().length > sizedFields[field].max
+		);
+
+	if (tooSmallField || tooLargeField) {
+		return res.status(422).json({
+			code: 422,
+			reason: 'ValidationError',
+			message: tooSmallField
+				? `Must be at least ${sizedFields[tooSmallField].min} characters long`
+				: `Must be at most ${sizedFields[tooLargeField].max} characters long`,
+				location: tooSmallField || tooLargeField
+			});
+	}
+
+	let { email, password, firstName } = req.body;
+	firstName = firstName.trim();
+	email = email.trim();
+
+	return User.find({email})
+		.countDocuments()
+		.then(count => {
+			if (count > 0) {
+				return Promise.reject({
+					code: 422,
+					reason: 'ValidationError',
+					message: 'User already registered with that email',
+					location: 'email'
+				});
+			}
+			return User.hashPassword(password);
+		})
+		.then(hash => {
+			return User.create({
+				email,
+				password: hash,
+				firstName
+			});
+		})
+		.then(user => {
+			return res.status(201).json(user.serialize());
+		})
+		.catch(err => {
+			if (err.reason === 'ValidationError') {
+				return res.status(err.code).json(err);
+			}
+			res.status(500).json({code: 500, message: 'Internal server error'});
+		});
 });
 
 router.put("/:id", (req, res) => {
