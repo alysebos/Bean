@@ -1,10 +1,13 @@
 const express = require("express");
 const router = express.Router();
+const passport = require("passport");
 
 const { Pet, User, Checkup } = require("./models");
 const { missingField } = require("./missingField");
 
-router.get("/", (req, res) => {
+const jwtAuth = passport.authenticate('jwt', {session: false});
+
+router.get("/", jwtAuth, (req, res) => {
 	if (!(req.body.ownerId)) {
 		const message = `Missing ownerId in request body`;
 		console.error(message);
@@ -22,7 +25,7 @@ router.get("/", (req, res) => {
 		});
 });
 
-router.get("/:id", (req, res) => {
+router.get("/:id", jwtAuth, (req, res) => {
 	if (!(req.body.ownerId)) {
 		const message = `Missing ownerId in request body`;
 		console.error(message);
@@ -43,7 +46,7 @@ router.get("/:id", (req, res) => {
 		})
 });
 
-router.post("/", (req, res) => {
+router.post("/", jwtAuth, (req, res) => {
 	// CHECK IF REQUIRED FIELDS ARE IN THE REQUEST
 	const requiredFields = ["name", "species", "breed", "weightUnits", "birthDate", "owner"];
 	let message = missingField(req.body, requiredFields);
@@ -85,7 +88,7 @@ router.post("/", (req, res) => {
 	}
 });
 
-router.put("/:id", (req, res) => {
+router.put("/:id", jwtAuth, (req, res) => {
 	// CHECK IF ID IN BODY AND PARAMS MATCH
 	if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
 		const message =
@@ -132,7 +135,7 @@ router.put("/:id", (req, res) => {
 			})
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", jwtAuth, (req, res) => {
 	// MAKE SURE THE OWNER ID IS PROVIDED	
 	if (!req.body.ownerId) {
 		const message = `Missing ownerId in request body`;

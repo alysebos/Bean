@@ -1,4 +1,5 @@
 "use strict";
+require("dotenv").config();
 
 const express = require("express");
 const morgan = require("morgan");
@@ -8,12 +9,12 @@ const passport = require("passport");
 mongoose.Promise = global.Promise;
 
 const { PORT, DATABASE_URL } = require("./config");
-const { User, Pet, Checkup } = require("./models");
 
 const app = express();
-app.use(express.json());
+app.use(express.json())
 
-const { router: authRouter, localStrategy, jwtStrategy } = require("./auth");
+const authRouter = require("./auth/router");
+const { localStrategy, jwtStrategy } = require("./auth/strategies");
 const petsRouter = require("./petsRouter");
 const usersRouter = require("./usersRouter");
 const checkupsRouter = require("./checkupsRouter");

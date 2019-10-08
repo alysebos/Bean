@@ -1,10 +1,14 @@
 const express = require("express");
 const router = express.Router();
+const passport = require("passport");
 
 const { User, Pet, Checkup } = require("./models");
 const { missingField } = require("./missingField");
 
-router.get("/", (req, res) => {
+const jwtAuth = passport.authenticate('jwt', {session: false});
+
+
+router.get("/", jwtAuth, (req, res) => {
 	if (!req.body.id) {
 		const message = `Missing id in request body`;
 		console.error(message);
@@ -121,7 +125,7 @@ router.post("/", (req, res) => {
 		});
 });
 
-router.put("/:id", (req, res) => {
+router.put("/:id", jwtAuth, (req, res) => {
 	// CHECK IF ID IN BODY AND PARAMS MATCH
 	if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
 		const message =
@@ -145,7 +149,7 @@ router.put("/:id", (req, res) => {
 		.catch(err => res.status(500).json({ message: "Internal server error" }));
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", jwtAuth, (req, res) => {
 	if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
 		const message =
 			`Request path id (${req.params.id}) and request body id (${req.body.id}) must match`;

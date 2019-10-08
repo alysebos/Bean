@@ -1,10 +1,13 @@
 const express = require("express");
 const router = express.Router();
+const passport = require("passport");
 
 const { Pet, User, Checkup } = require("./models");
 const { missingField } = require("./missingField");
 
-router.get("/:id", (req, res) => {
+const jwtAuth = passport.authenticate('jwt', {session: false});
+
+router.get("/:id", jwtAuth, (req, res) => {
 	// 
 	if (!(req.body.ownerId)) {
 		const message = `Missing ownerId in request body`;
@@ -31,7 +34,7 @@ router.get("/:id", (req, res) => {
 		})
 });
 
-router.get("/:id/:checkupId", (req, res) => {
+router.get("/:id/:checkupId", jwtAuth, (req, res) => {
 	// 
 	if (!(req.body.ownerId)) {
 		const message = `Missing ownerId in request body`;
@@ -56,7 +59,7 @@ router.get("/:id/:checkupId", (req, res) => {
 		})
 });
 
-router.post("/", (req, res) => {
+router.post("/", jwtAuth, (req, res) => {
 	// CHECK IF REQUIRED FIELDS ARE IN THE REQUEST
 	const requiredFields = ["pet", "owner", "date", "vet"];
 	let message = missingField(req.body, requiredFields);
@@ -109,7 +112,7 @@ router.post("/", (req, res) => {
 		.catch(err => res.status(400).json({ message: `Could not find user ID ${req.body.owner}`}));
 });
 
-router.put("/:id", (req, res) => {
+router.put("/:id", jwtAuth, (req, res) => {
 	// CHECK IF REQUIRED FIELDS ARE IN THE REQUEST
 	const requiredFields = ["pet", "owner", "date", "vet", "id"];
 	let message = missingField(req.body, requiredFields);
@@ -171,7 +174,7 @@ router.put("/:id", (req, res) => {
 		.catch(err => res.status(400).json({ message: `Could not find user ID ${req.body.owner}`}));
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", jwtAuth, (req, res) => {
 	// MAKE SURE THE OWNER ID IS PROVIDED	
 	if (!req.body.ownerId) {
 		const message = `Missing ownerId in request body`;
