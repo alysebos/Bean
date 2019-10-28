@@ -8,12 +8,12 @@ const { missingField } = require("./missingField");
 const jwtAuth = passport.authenticate('jwt', {session: false});
 
 router.get("/", jwtAuth, (req, res) => {
-	if (!(req.body.ownerId)) {
-		const message = `Missing ownerId in request body`;
+	if (!(req.user)) {
+		const message = `Not logged in`;
 		console.error(message);
 		return res.status(400).json({ message: message });
 	};
-	Pet.find({ owner: req.body.ownerId })
+	Pet.find({ owner: req.user.id })
 		.then(pets => {
 			res.json({
 				pets: pets

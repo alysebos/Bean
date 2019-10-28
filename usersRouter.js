@@ -9,13 +9,14 @@ const jwtAuth = passport.authenticate('jwt', {session: false});
 
 
 router.get("/", jwtAuth, (req, res) => {
-	if (!req.body.id) {
-		const message = `Missing id in request body`;
+	if (!req.user.id) {
+		const message = `No user logged in`;
 		console.error(message);
 		return res.status(400).json({message: message});
 	}
-	User.findById(req.body.id)
+	User.findById(req.user.id)
 		.then(user => {
+			console.log(user.serialize());
 			res.json(user.serialize());
 		})
 		.catch(err => res.status(500).json({ message: "Internal Server Error" }));

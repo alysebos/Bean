@@ -84,7 +84,7 @@ function tearDownDB () {
 	console.warn("Deleting test database");
 	return mongoose.connection.dropDatabase();
 }
-
+/* 
 describe("Bean Application", function () {
 
 	before(function () {
@@ -353,3 +353,4 @@ describe("Bean Application", function () {
 	})
 
 })
+*/
