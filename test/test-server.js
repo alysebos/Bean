@@ -84,7 +84,7 @@ function tearDownDB () {
 	console.warn("Deleting test database");
 	return mongoose.connection.dropDatabase();
 }
-/* 
+
 describe("Bean Application", function () {
 
 	before(function () {
@@ -113,7 +113,7 @@ describe("Bean Application", function () {
 	after(function () {
 		return closeServer();
 	})
-
+/*
 	describe("Users Endpoints", function() {
 		it("should return current user on GET /:id", function() {
 			return chai.request(app)
@@ -351,6 +351,6 @@ describe("Bean Application", function () {
 				})
 		})
 	})
+	*/
 
 })
-*/
