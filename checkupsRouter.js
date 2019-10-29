@@ -9,20 +9,20 @@ const jwtAuth = passport.authenticate('jwt', {session: false});
 
 router.get("/:id", jwtAuth, (req, res) => {
 	// 
-	if (!(req.body.ownerId)) {
-		const message = `Missing ownerId in request body`;
+	if (!(req.user)) {
+		const message = `Not logged in`;
 		console.error(message);
 		return res.status(400).json({ message: message });
 	};
 	Pet.findById(req.params.id)
 		.then(pet => {
-			if (!(req.body.ownerId == pet.owner)) {
-				const message = `${req.body.ownerId} doesn't own ${req.params.id}`
+			if (!(req.user.id == pet.owner)) {
+				const message = `${req.user.id} doesn't own ${req.params.id}`
 				console.error(message);
 				return res.status(400).json({ message: message });
 			}
 			else {
-				Checkup.find({ owner: req.body.ownerId })
+				Checkup.find({ pet: pet.id })
 					.then(checkups => {
 						res.json({ checkups: checkups });
 					})
@@ -61,39 +61,41 @@ router.get("/:id/:checkupId", jwtAuth, (req, res) => {
 
 router.post("/", jwtAuth, (req, res) => {
 	// CHECK IF REQUIRED FIELDS ARE IN THE REQUEST
-	const requiredFields = ["pet", "owner", "date", "vet"];
-	let message = missingField(req.body, requiredFields);
+	const requiredFields = ["date", "vet", "owner", "pet"];
+	let newCheckup = req.body;
+	newCheckup.owner = req.user.id;
+	let message = missingField(newCheckup, requiredFields);
 	if (message) {
 		console.error(message);
 		return res.status(400).json({ message: message });
 	}
 	// Change the date to an actual date
-	req.body.date = new Date (req.body.date + " 00:00:00");
+	newCheckup.date = new Date (newCheckup.date + " 00:00:00");
 	// MAKE SURE THE OWNER EXISTS
-	User.findById(req.body.owner)
+	User.findById(newCheckup.owner)
 		.then(user => {
 			if (!user.firstName) {
-				const message = `No user with ID ${req.body.owner}`;
+				const message = `No user with ID ${newCheckup.owner}`;
 				console.error(message);
 				res.status(400).json({ message: message });
 			}
 			else {
 				// MAKE SURE THE PET EXISTS
-				Pet.findById(req.body.pet)
+				Pet.findById(newCheckup.pet)
 					.then(pet => {
 						if (!pet.name) {
-							const message = `No pet with ID ${req.body.owner}`;
+							const message = `No pet with ID ${newCheckup.pet}`;
 							console.error(message);
 							res.status(400).json({ message: message });
 						}
-						else if (pet.owner != req.body.owner) {
-							const message = `${req.body.owner} does not own ${req.body.pet}`
+						else if (pet.owner != newCheckup.owner) {
+							const message = `${newCheckup.owner} does not own ${newCheckup.pet}`
 							console.error(message);
 							res.status(400).json({ message: message });
 						}
 						else {
 							Checkup
-								.create(req.body)
+								.create(newCheckup)
 								.then(checkup => {
 									res.status(200).json(checkup);
 								})

@@ -26,15 +26,15 @@ router.get("/", jwtAuth, (req, res) => {
 });
 
 router.get("/:id", jwtAuth, (req, res) => {
-	if (!(req.body.ownerId)) {
-		const message = `Missing ownerId in request body`;
+	if (!(req.user)) {
+		const message = `User is nog logged in`;
 		console.error(message);
 		return res.status(400).json({ message: message });
 	};
 	Pet.findById(req.params.id)
 		.then(pet => {
-			if (req.body.ownerId != pet.owner) {
-				const message = `${req.body.ownerId} doesn't own ${req.params.id}`
+			if (req.user.id != pet.owner) {
+				const message = `${req.user.id} doesn't own ${req.params.id}`
 				console.error(message);
 				return res.status(400).json({ message: message });
 			}
@@ -48,7 +48,7 @@ router.get("/:id", jwtAuth, (req, res) => {
 
 router.post("/", jwtAuth, (req, res) => {
 	// CHECK IF REQUIRED FIELDS ARE IN THE REQUEST
-	const requiredFields = ["name", "species", "breed", "weightUnits", "birthDate", "owner"];
+	const requiredFields = ["name", "species", "breed", "weightUnits", "birthDate"];
 	let message = missingField(req.body, requiredFields);
 	if (message) {
 		console.error(message);4
@@ -56,9 +56,9 @@ router.post("/", jwtAuth, (req, res) => {
 	}
 	else {
 	// MAKE SURE THE OWNER EXISTS
-		User.findById(req.body.owner)
+		User.findById(req.user.id)
 			.then(user => {
-				if (!user.firstName) {
+				if (!user) {
 					let message = `No user with that ID`;
 					console.error(message);
 					return res.status(400).json({ message: message });
