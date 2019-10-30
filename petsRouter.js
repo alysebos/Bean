@@ -60,7 +60,7 @@ router.post("/", jwtAuth, (req, res) => {
 		let dateYear = date[0];
 		let dateMonth = date[1] - 1;
 		let dateDay = date[2];
-		req.body.date = new Date (dateYear, dateMonth, dateDay);
+		req.body.date = new Date (Date.UTC(dateYear, dateMonth, dateDay));
 	// MAKE SURE THE OWNER EXISTS
 		User.findById(req.user.id)
 			.then(user => {
@@ -119,7 +119,7 @@ router.put("/:id", jwtAuth, (req, res) => {
 				let dateYear = date[0];
 				let dateMonth = date[1] - 1;
 				let dateDay = date[2];
-				newPet[field] = new Date (dateYear, dateMonth, dateDay);
+				newPet[field] = new Date (Date.UTC(dateYear, dateMonth, dateDay));
 			}
 			else {
 				newPet[field] = req.body[field];

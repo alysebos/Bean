@@ -74,7 +74,7 @@ router.post("/", jwtAuth, (req, res) => {
 	let dateYear = date[0];
 	let dateMonth = date[1] - 1;
 	let dateDay = date[2];
-	newCheckup.date = new Date (dateYear, dateMonth, dateDay);
+	newCheckup.date = new Date (Date.UTC(dateYear, dateMonth, dateDay));
 	// MAKE SURE THE OWNER EXISTS
 	User.findById(newCheckup.owner)
 		.then(user => {
@@ -141,7 +141,7 @@ router.put("/:id", jwtAuth, (req, res) => {
 		let dateYear = date[0];
 		let dateMonth = date[1] - 1;
 		let dateDay = date[2];
-		newCheckup.date = new Date (dateYear, dateMonth, dateDay);
+		newCheckup.date = new Date (Date.UTC(dateYear, dateMonth, dateDay));
 	}
 	// CHECK IF THE PET IS OWNED BY THIS OWNER
 	// MAKE SURE THE OWNER EXISTS
