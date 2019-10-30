@@ -147,16 +147,16 @@ router.put("/:id", jwtAuth, (req, res) => {
 
 router.delete("/:id", jwtAuth, (req, res) => {
 	// MAKE SURE THE OWNER ID IS PROVIDED	
-	if (!req.body.ownerId) {
-		const message = `Missing ownerId in request body`;
+	if (!req.user) {
+		const message = `Not logged in`;
 		console.error(message);
 		return res.status(400).json({ message: message });
 	}
 	// DELETE THE PET
 	Pet.findById(req.params.id)
 		.then(pet => {
-			if (req.body.ownerId != pet.owner) {
-				const message = `Owner ${req.body.ownerId} doesn't own ${req.params.id}`;
+			if (req.user.id != pet.owner) {
+				const message = `Owner ${req.user.id} doesn't own ${req.params.id}`;
 				console.error(message);
 				return res.status(400).json({ message: message });
 			}

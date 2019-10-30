@@ -34,24 +34,22 @@ router.get("/:id", jwtAuth, (req, res) => {
 		})
 });
 
-router.get("/:id/:checkupId", jwtAuth, (req, res) => {
+router.get("/detail/:checkupId", jwtAuth, (req, res) => {
 	// 
-	if (!(req.body.ownerId)) {
-		const message = `Missing ownerId in request body`;
+	if (!(req.user)) {
+		const message = `Not logged in`;
 		console.error(message);
 		return res.status(400).json({ message: message });
 	};
-	Pet.findById(req.params.id)
-		.then(pet => {
-			if (!(req.body.ownerId == pet.owner)) {
-				const message = `${req.body.ownerId} doesn't own ${req.params.id}`
+
+	Checkup.findById(req.params.checkupId)
+		.then(checkup => {
+			if (req.user.id !== checkup.owner) {
+				const message = `User does not own this checkup`;
 				console.error(message);
 				return res.status(400).json({ message: message });
 			}
-			else {
-				Checkup.findById(req.params.checkupId)
-					.then(checkup => res.json(checkup))
-			}
+			res.json(checkup)
 		})
 		.catch(err => {
 			console.error(err);
@@ -187,22 +185,22 @@ router.put("/:id", jwtAuth, (req, res) => {
 
 router.delete("/:id", jwtAuth, (req, res) => {
 	// MAKE SURE THE OWNER ID IS PROVIDED	
-	if (!req.body.ownerId) {
-		const message = `Missing ownerId in request body`;
+	if (!req.user) {
+		const message = `Not logged in`;
 		console.error(message);
 		return res.status(400).json({ message: message });
 	}
 	// DELETE THE CHECKUP
 	Checkup.findById(req.params.id)
 		.then(checkup => {
-			if (!(req.body.ownerId == checkup.owner)) {
-				const message = `Owner ${req.body.ownerId} doesn't own ${req.params.id}`;
+			if (!(req.user.id == checkup.owner)) {
+				const message = `Owner ${req.user.id} doesn't own ${req.params.id}`;
 				console.error(message);
 				return res.status(400).json({ message: message });
 			}
 			else {
-				Checkup.findByIdAndRemove(req.params.id)
-					.then(checkup => res.status(204).end())
+			Checkup.findByIdAndRemove(req.params.id)
+				.then(checkup => res.status(204).end())
 			}
 		})
 		.catch(err => res.status(500).json({ message: "Not Found" }));

@@ -16,7 +16,6 @@ router.get("/", jwtAuth, (req, res) => {
 	}
 	User.findById(req.user.id)
 		.then(user => {
-			console.log(user.serialize());
 			res.json(user.serialize());
 		})
 		.catch(err => res.status(500).json({ message: "Internal Server Error" }));
