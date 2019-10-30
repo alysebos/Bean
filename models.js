@@ -39,123 +39,26 @@ const checkupSchema = mongoose.Schema({
 	owner: { type: String, required: true },
 	date: { type: String, required: true },
 	vet:  { type: Boolean, required: true },
-	physical: [
-		{weight: {
-			highlight: Boolean,
-			value: Number,
-			remark: String
-		}},
-		{temperature: {
-			highlight: Boolean,
-			value: String,
-			remark: String
-		}},
-		{pulse: {
-			highlight: Boolean,
-			value: String,
-			remark: String
-		}},
-		{respiration: {
-			highlight: Boolean,
-			value: String,
-			remark: String
-		}},
-		{abdomen: {
-			highlight: Boolean,
-			value: String,
-			remark: String
-		}},
-		{legs: {
-			highlight: Boolean,
-			value: String,
-			remark: String
-		}},
-		{feet: {
-			highlight: Boolean,
-			value: String,
-			remark: String
-		}},
-		{joints: {
-			highlight: Boolean,
-			value: String,
-			remark: String
-		}},
-		{genitals: {
-			highlight: Boolean,
-			value: String,
-			remark: String
-		}},
-		{anus: {
-			highlight: Boolean,
-			value: String,
-			remark: String
-		}},
-		{ears: {
-			highlight: Boolean,
-			value: String,
-			remark: String
-		}},
-		{eyes: {
-			highlight: Boolean,
-			value: String,
-			remark: String
-		}},
-		{mouth: {
-			highlight: Boolean,
-			value: String,
-			remark: String
-		}},
-		{coat: {
-			highlight: Boolean,
-			value: String,
-			remark: String
-		}},
-		{waste: {
-			highlight: Boolean,
-			value: String,
-			remark: String
-		}},
-		{claws: {
-			highlight: Boolean,
-			value: String,
-			remark: String
-		}}
-	],
-	nonPhysical: [
-		{temperament: {
-			highlight: Boolean,
-			value: String,
-			remark: String
-		}},
-		{diet: {
-			highlight: Boolean,
-			value: String,
-			remark: String
-		}},
-		{wasteHabits: {
-			highlight: Boolean,
-			value: String,
-			remark: String
-		}},
-		{energyLevel: {
-			highlight: Boolean,
-			value: String,
-			remark: String
-		}}
-	],
-	vetActions: {
-		prescriptions: [
-			{
-				name: String,
-				frequency: String,
-				duration: String,
-				dose: String,
-				application: String
-			}
-		],
-		vaccines: [String],
-		treatments: [String]
-	},
+	weight: { type: String, required: true },
+	temperature: String,
+	pulse: String,
+	respiration: String,
+	abdomen: String,
+	legs: String,
+	feet: String,
+	joints: String,
+	genitals: String,
+	anus: String,
+	ears: String,
+	eyes: String,
+	mouth: String,
+	coat: String,
+	waste: String,
+	claws: String,
+	temperament: String,
+	diet: String,
+	wasteHabits: String,
+	energyLevel: String,
 	miscNotes: String
 });
 

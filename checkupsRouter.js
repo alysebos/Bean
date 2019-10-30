@@ -70,7 +70,11 @@ router.post("/", jwtAuth, (req, res) => {
 		return res.status(400).json({ message: message });
 	}
 	// Change the date to an actual date
-	newCheckup.date = new Date (newCheckup.date + " 00:00:00");
+	let date = newCheckup.date.split("-");
+	let dateYear = date[0];
+	let dateMonth = date[1] - 1;
+	let dateDay = date[2];
+	newCheckup.date = new Date (dateYear, dateMonth, dateDay);
 	// MAKE SURE THE OWNER EXISTS
 	User.findById(newCheckup.owner)
 		.then(user => {
@@ -131,8 +135,13 @@ router.put("/:id", jwtAuth, (req, res) => {
 	}
 	// SET UPDATE OBJECT AND FIELDS WE ARE ALLOWED TO UPDATE
 	const newCheckup = req.body;
+	
 	if (newCheckup.date) {
-		newCheckup.date = new Date(newCheckup.date + " 00:00:00");
+		let date = newCheckup.date.split("-");
+		let dateYear = date[0];
+		let dateMonth = date[1] - 1;
+		let dateDay = date[2];
+		newCheckup.date = new Date (dateYear, dateMonth, dateDay);
 	}
 	// CHECK IF THE PET IS OWNED BY THIS OWNER
 	// MAKE SURE THE OWNER EXISTS

@@ -55,6 +55,12 @@ router.post("/", jwtAuth, (req, res) => {
 		return res.status(400).json({ message: message });
 	}
 	else {
+	// Format the date properly
+		let date = req.body.birthDate.split("-");
+		let dateYear = date[0];
+		let dateMonth = date[1] - 1;
+		let dateDay = date[2];
+		req.body.date = new Date (dateYear, dateMonth, dateDay);
 	// MAKE SURE THE OWNER EXISTS
 		User.findById(req.user.id)
 			.then(user => {
@@ -69,7 +75,7 @@ router.post("/", jwtAuth, (req, res) => {
 							name: req.body.name,
 							species: req.body.species,
 							breed: req.body.breed,
-							birthDate: new Date(req.body.birthDate + " 00:00:00"),
+							birthDate: req.body.date,
 							weightUnits: req.body.weightUnits,
 							owner: user._id})
 						.then(pet => {
@@ -109,7 +115,11 @@ router.put("/:id", jwtAuth, (req, res) => {
 	updateableFields.forEach(field => {
 		if (field in req.body) {
 			if (field === "birthDate") {
-				newPet[field] = new Date(req.body[field] + " 00:00:00");
+				let date = newPet[field].split("-");
+				let dateYear = date[0];
+				let dateMonth = date[1] - 1;
+				let dateDay = date[2];
+				newPet[field] = new Date (dateYear, dateMonth, dateDay);
 			}
 			else {
 				newPet[field] = req.body[field];
