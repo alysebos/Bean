@@ -143,10 +143,10 @@ router.put("/:id", jwtAuth, (req, res) => {
 	}
 	// CHECK IF THE PET IS OWNED BY THIS OWNER
 	// MAKE SURE THE OWNER EXISTS
-	User.findById(req.body.owner)
+	User.findById(req.user.id)
 		.then(user => {
 			if (!user.firstName) {
-				const message = `No user with ID ${req.body.owner}`;
+				const message = `Not logged in`;
 				console.error(message);
 				res.status(400).json({ message: message });
 			}
@@ -155,12 +155,12 @@ router.put("/:id", jwtAuth, (req, res) => {
 				Pet.findById(req.body.pet)
 					.then(pet => {
 						if (!pet.name) {
-							const message = `No pet with ID ${req.body.owner}`;
+							const message = `No pet with ID ${req.body.pet}`;
 							console.error(message);
 							res.status(400).json({ message: message });
 						}
-						else if (pet.owner != req.body.owner) {
-							const message = `${req.body.owner} does not own ${req.body.pet}`
+						else if (pet.owner != req.user.id) {
+							const message = `${req.user.id} does not own ${req.body.pet}`
 							console.error(message);
 							res.status(400).json({ message: message });
 						}
@@ -180,7 +180,7 @@ router.put("/:id", jwtAuth, (req, res) => {
 					})
 			}
 		})
-		.catch(err => res.status(400).json({ message: `Could not find user ID ${req.body.owner}`}));
+		.catch(err => res.status(400).json({ message: `Could not find user ID ${req.user.id}`}));
 });
 
 router.delete("/:id", jwtAuth, (req, res) => {
