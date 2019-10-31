@@ -103,17 +103,17 @@ router.put("/:id", jwtAuth, (req, res) => {
 		return res.status(400).json({ message: message });
 	}
 	// MAKE SURE THE OWNER ID EXISTS
-	if (!req.body.owner) {
-		const message = `Missing owner in request body`;
+	if (!req.user) {
+		const message = `Not logged in`;
 		console.error(message);
 		return res.status(400).json({ message: message });
 	}
 	// SET UPDATE OBJECT AND FIELDS WE ARE ALLOWED TO UPDATE
-	const newPet = {};
+	const newPet = req.body;
 	const updateableFields = ["name", "species", "breed", "birthDate", "weightUnits"];
 	// BUILD THE UPDATE OBJECT
 	updateableFields.forEach(field => {
-		if (field in req.body) {
+		if (field in newPet) {
 			if (field === "birthDate") {
 				let date = newPet[field].split("-");
 				let dateYear = date[0];
@@ -130,8 +130,8 @@ router.put("/:id", jwtAuth, (req, res) => {
 	Pet
 		.findById(req.params.id)
 			.then(pet =>{
-				if (pet.owner != req.body.owner) {
-					const message = `${req.body.owner} doesn't own ${req.params.id}`;
+				if (pet.owner != req.user.id) {
+					const message = `${req.user.id} doesn't own ${req.params.id}`;
 					console.error(message);
 					return res.status(400).json({ message: message });
 				}
