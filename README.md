@@ -2,7 +2,7 @@
 
 ## Links to app
 
-**Note**: It doesn't really work, yet!
+**Note**: It totally works!
 
 [Link to Bean Deployment](https://alysebos.github.io/bean-front-end/)
 
