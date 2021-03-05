@@ -1,10 +1,8 @@
 # :) Hello!
 
-## Links to app
+## Link to app
 
 [Link to Bean Deployment](https://alysebos.github.io/bean-front-end/)
-
-[Link to Bean Trello Board](https://trello.com/b/NxTEratC/bean)
 
 ## The Vision for Bean - Users should be able to do the following:
 
